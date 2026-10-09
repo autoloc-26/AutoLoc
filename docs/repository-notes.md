@@ -18,9 +18,10 @@
 
 | Anomalie SonarQube for IDE | Règle / explication | Correction apportée |
 |----------------------------|---------------------|---------------------|
-| Imports inutilisés dans les entités | java:S1128 - Les imports inutilisés encombrent le code et réduisent la lisibilité | Suppression des imports non utilisés dans toutes les classes d'entités |
-| Utilisation de @Data sur les entités JPA | Avoid using Lombok's @Data on JPA entities - Peut causer des problèmes avec equals/hashCode et les proxies lazy | Remplacement de @Data par @Getter et @Setter ciblés, avec @EqualsAndHashCode(of="id") explicite |
-| Classes ou méthodes inutilisées | java:S1068 / java:S1144 - Code mort qui réduit la maintenabilité | Suppression du code mort et des méthodes/attributs non référencés |
+| **Annotations Lombok groupées** | Bonnes pratiques de lisibilité - Les annotations multiples sur une ligne réduisent la lisibilité du code | Séparation des annotations Lombok sur plusieurs lignes pour toutes les entités (@Getter, @Setter, @ToString, etc.) |
+| **@EqualsAndHashCode sans configuration sur entités JPA** | Lombok best practices - L'utilisation de @EqualsAndHashCode par défaut sur des entités JPA peut causer des problèmes avec les proxies Hibernate et les associations lazy | Remplacement par `@EqualsAndHashCode(onlyExplicitlyIncluded = true)` et ajout de `@EqualsAndHashCode.Include` uniquement sur l'ID de chaque entité |
+| **@EqualsAndHashCode.Exclude redondant** | Lombok warning - Quand `onlyExplicitlyIncluded = true`, les champs sont exclus par défaut, donc @Exclude est inutile | Suppression de toutes les annotations `@EqualsAndHashCode.Exclude` sur les associations (conservé uniquement `@ToString.Exclude`) |
+| **Test vide sans assertion** | java:S2699 - Tests should include assertions - Un test sans assertion ne vérifie rien | Ajout de commentaires explicatifs dans le test `contextLoads()` pour clarifier son rôle (vérification du contexte Spring) |
 
 ## 3. Points importants à retenir
 
