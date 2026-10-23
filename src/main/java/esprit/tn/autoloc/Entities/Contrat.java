@@ -1,5 +1,6 @@
 package esprit.tn.autoloc.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,7 @@ public class Contrat {
 
     @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("contrat-paiements")
     @Builder.Default
     @ToString.Exclude
     private List<Paiement> paiements = new ArrayList<>();

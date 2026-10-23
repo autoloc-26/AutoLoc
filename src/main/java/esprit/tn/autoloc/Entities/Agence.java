@@ -1,4 +1,6 @@
 package esprit.tn.autoloc.Entities;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,11 +27,13 @@ public class Agence {
     private String telephone;
 
     @OneToMany(mappedBy = "agence", fetch = FetchType.LAZY)
+    @JsonIgnore
     @Builder.Default
     @ToString.Exclude
     private List<Vehicule> vehicules = new ArrayList<>();
 
     @OneToMany(mappedBy = "agence", fetch = FetchType.LAZY)
+    @JsonIgnore
     @Builder.Default
     @ToString.Exclude
     private List<Employe> employes = new ArrayList<>();

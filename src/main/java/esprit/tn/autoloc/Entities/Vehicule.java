@@ -1,5 +1,6 @@
 package esprit.tn.autoloc.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,11 +41,13 @@ public class Vehicule {
     @JoinTable(name = "vehicule_equipement",
             joinColumns = @JoinColumn(name = "id_vehicule"),
             inverseJoinColumns = @JoinColumn(name = "id_equipement"))
+    @JsonIgnore
     @Builder.Default
     @ToString.Exclude
     private Set<Equipement> equipements = new HashSet<>();
 
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonIgnore
     @Builder.Default
     @ToString.Exclude
     private List<Maintenance> maintenances = new ArrayList<>();

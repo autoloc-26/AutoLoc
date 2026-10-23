@@ -4,9 +4,9 @@ import esprit.tn.autoloc.Entities.Contrat;
 import java.util.List;
 
 public interface IContratService {
-    Contrat addContrat(Contrat contrat);
-    Contrat updateContrat(Contrat contrat);
-    void deleteContrat(Long id);
-    Contrat getContratById(Long id);
-    List<Contrat> getAllContrats();
+    Contrat create(Contrat contrat);
+    Contrat update(Long id, Contrat contrat);
+    void deleteById(Long id);
+    Contrat findById(Long id);
+    List<Contrat> findAll();
 }

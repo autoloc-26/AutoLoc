@@ -1,5 +1,6 @@
 package esprit.tn.autoloc.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +27,7 @@ public class Paiement {
     private ModePaiement modePaiement;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference("contrat-paiements")
     @ToString.Exclude
     private Contrat contrat;
 }
