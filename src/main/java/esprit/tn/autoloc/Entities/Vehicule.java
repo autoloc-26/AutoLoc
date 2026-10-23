@@ -46,7 +46,7 @@ public class Vehicule {
     @ToString.Exclude
     private Set<Equipement> equipements = new HashSet<>();
 
-    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.PERSIST)
     @JsonIgnore
     @Builder.Default
     @ToString.Exclude
