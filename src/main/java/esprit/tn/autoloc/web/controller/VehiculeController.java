@@ -1,6 +1,8 @@
 package esprit.tn.autoloc.web.controller;
 
-import esprit.tn.autoloc.Entities.Vehicule;
+import esprit.tn.autoloc.dto.VehiculeRequest;
+import esprit.tn.autoloc.dto.VehiculeResponse;
+import jakarta.validation.Valid;
 import esprit.tn.autoloc.services.IVehiculeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +26,7 @@ public class VehiculeController {
     @Operation(summary = "Lister les vehicules", description = "Recupere la liste complete des vehicules")
     @ApiResponse(responseCode = "200", description = "Liste recuperee avec succes")
     @GetMapping
-    public List<Vehicule> findAll() {
+    public List<VehiculeResponse> findAll() {
         return vehiculeService.findAll();
     }
 
@@ -34,7 +36,7 @@ public class VehiculeController {
             @ApiResponse(responseCode = "404", description = "Vehicule introuvable")
     })
     @GetMapping("/{id}")
-    public Vehicule findById(@Parameter(description = "Identifiant du vehicule") @PathVariable Long id) {
+    public VehiculeResponse findById(@Parameter(description = "Identifiant du vehicule") @PathVariable Long id) {
         return vehiculeService.findById(id);
     }
 
@@ -45,7 +47,7 @@ public class VehiculeController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Vehicule create(@RequestBody Vehicule vehicule) {
+    public VehiculeResponse create(@Valid @RequestBody VehiculeRequest vehicule) {
         return vehiculeService.create(vehicule);
     }
 
@@ -56,8 +58,8 @@ public class VehiculeController {
             @ApiResponse(responseCode = "400", description = "Donnees invalides")
     })
     @PutMapping("/{id}")
-    public Vehicule update(@Parameter(description = "Identifiant du vehicule") @PathVariable Long id,
-                           @RequestBody Vehicule vehicule) {
+    public VehiculeResponse update(@Parameter(description = "Identifiant du vehicule") @PathVariable Long id,
+                           @Valid @RequestBody VehiculeRequest vehicule) {
         return vehiculeService.update(id, vehicule);
     }
 

@@ -1,6 +1,8 @@
-package esprit.tn.autoloc.controllers;
+package esprit.tn.autoloc.web.controller;
 
-import esprit.tn.autoloc.Entities.Client;
+import esprit.tn.autoloc.dto.ClientRequest;
+import esprit.tn.autoloc.dto.ClientResponse;
+import jakarta.validation.Valid;
 import esprit.tn.autoloc.services.IClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +26,7 @@ public class ClientController {
     @Operation(summary = "Lister les clients", description = "Recupere la liste complete de les clients")
     @ApiResponse(responseCode = "200", description = "Liste recuperee avec succes")
     @GetMapping
-    public List<Client> findAll() {
+    public List<ClientResponse> findAll() {
         return clientService.findAll();
     }
 
@@ -34,7 +36,7 @@ public class ClientController {
             @ApiResponse(responseCode = "404", description = "Client introuvable")
     })
     @GetMapping("/{id}")
-    public Client findById(@Parameter(description = "Identifiant du client") @PathVariable Long id) {
+    public ClientResponse findById(@Parameter(description = "Identifiant du client") @PathVariable Long id) {
         return clientService.findById(id);
     }
 
@@ -45,7 +47,7 @@ public class ClientController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Client create(@RequestBody Client client) {
+    public ClientResponse create(@Valid @RequestBody ClientRequest client) {
         return clientService.create(client);
     }
 
@@ -56,8 +58,8 @@ public class ClientController {
             @ApiResponse(responseCode = "400", description = "Donnees invalides")
     })
     @PutMapping("/{id}")
-    public Client update(@Parameter(description = "Identifiant du client") @PathVariable Long id,
-                      @RequestBody Client client) {
+    public ClientResponse update(@Parameter(description = "Identifiant du client") @PathVariable Long id,
+                      @Valid @RequestBody ClientRequest client) {
         return clientService.update(id, client);
     }
 

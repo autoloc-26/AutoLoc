@@ -1,11 +1,16 @@
 package esprit.tn.autoloc.services;
 
 import esprit.tn.autoloc.Entities.Contrat;
-import esprit.tn.autoloc.Entities.Paiement;
+import esprit.tn.autoloc.Entities.Reservation;
+import esprit.tn.autoloc.dto.ContratRequest;
+import esprit.tn.autoloc.dto.ContratResponse;
 import esprit.tn.autoloc.exception.ResourceNotFoundException;
+import esprit.tn.autoloc.mapper.ContratMapper;
 import esprit.tn.autoloc.repository.IContratRepository;
+import esprit.tn.autoloc.repository.IReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,39 +19,22 @@ import java.util.List;
 public class ContratServiceImpl implements IContratService {
 
     private final IContratRepository contratRepository;
+    private final IReservationRepository reservationRepository;
+    private final ContratMapper contratMapper;
 
     @Override
-    public Contrat create(Contrat contrat) {
-        if (contrat.getIdContrat() != null) {
-            throw new IllegalArgumentException("Un nouveau contrat ne doit pas avoir d'identifiant");
-        }
-        if (contrat.getMontantTotal() != null && contrat.getMontantTotal().signum() < 0) {
-            throw new IllegalArgumentException("Le montant total ne peut pas être négatif");
-        }
-        // Gestion de la cascade pour les paiements
-        if (contrat.getPaiements() != null) {
-            for (Paiement paiement : contrat.getPaiements()) {
-                paiement.setContrat(contrat);
-            }
-        }
-        return contratRepository.save(contrat);
+    @Transactional
+    public ContratResponse create(ContratRequest request) {
+        Contrat contrat = contratMapper.toEntity(request, resolveReservation(request.reservationId()));
+        return contratMapper.toResponse(contratRepository.save(contrat));
     }
 
     @Override
-    public Contrat update(Long id, Contrat contrat) {
-        Contrat existing = contratRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Contrat introuvable avec l'identifiant " + id));
-        
-        // Mise à jour des seuls attributs modifiables
-        existing.setDateSignature(contrat.getDateSignature());
-        existing.setMontantTotal(contrat.getMontantTotal());
-        existing.setValide(contrat.isValide());
-        
-        if (contrat.getMontantTotal() != null && contrat.getMontantTotal().signum() < 0) {
-            throw new IllegalArgumentException("Le montant total ne peut pas être négatif");
-        }
-        
-        return contratRepository.save(existing);
+    @Transactional
+    public ContratResponse update(Long id, ContratRequest request) {
+        Contrat existing = getOrThrow(id);
+        contratMapper.updateEntity(existing, request);
+        return contratMapper.toResponse(contratRepository.save(existing));
     }
 
     @Override
@@ -58,13 +46,27 @@ public class ContratServiceImpl implements IContratService {
     }
 
     @Override
-    public Contrat findById(Long id) {
+    @Transactional(readOnly = true)
+    public ContratResponse findById(Long id) {
+        return contratMapper.toResponse(getOrThrow(id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ContratResponse> findAll() {
+        return contratRepository.findAll().stream().map(contratMapper::toResponse).toList();
+    }
+
+    private Contrat getOrThrow(Long id) {
         return contratRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contrat introuvable avec l'identifiant " + id));
     }
 
-    @Override
-    public List<Contrat> findAll() {
-        return contratRepository.findAll();
+    private Reservation resolveReservation(Long reservationId) {
+        if (reservationId == null) {
+            return null;
+        }
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation introuvable avec l'identifiant " + reservationId));
     }
 }

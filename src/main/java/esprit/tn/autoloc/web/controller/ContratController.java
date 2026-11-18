@@ -1,6 +1,8 @@
 package esprit.tn.autoloc.web.controller;
 
-import esprit.tn.autoloc.Entities.Contrat;
+import esprit.tn.autoloc.dto.ContratRequest;
+import esprit.tn.autoloc.dto.ContratResponse;
+import jakarta.validation.Valid;
 import esprit.tn.autoloc.services.IContratService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,7 +33,7 @@ public class ContratController {
     @GetMapping
     @Operation(summary = "Lister tous les contrats", description = "Récupère la liste complète des contrats de location")
     @ApiResponse(responseCode = "200", description = "Liste des contrats récupérée avec succès")
-    public List<Contrat> findAll() {
+    public List<ContratResponse> findAll() {
         return contratService.findAll();
     }
 
@@ -46,7 +48,7 @@ public class ContratController {
             @ApiResponse(responseCode = "200", description = "Contrat trouvé"),
             @ApiResponse(responseCode = "404", description = "Contrat introuvable")
     })
-    public Contrat findById(@Parameter(description = "Identifiant du contrat") @PathVariable Long id) {
+    public ContratResponse findById(@Parameter(description = "Identifiant du contrat") @PathVariable Long id) {
         return contratService.findById(id);
     }
 
@@ -62,7 +64,7 @@ public class ContratController {
             @ApiResponse(responseCode = "201", description = "Contrat créé avec succès"),
             @ApiResponse(responseCode = "400", description = "Données invalides")
     })
-    public Contrat create(@RequestBody Contrat contrat) {
+    public ContratResponse create(@Valid @RequestBody ContratRequest contrat) {
         return contratService.create(contrat);
     }
 
@@ -79,9 +81,9 @@ public class ContratController {
             @ApiResponse(responseCode = "404", description = "Contrat introuvable"),
             @ApiResponse(responseCode = "400", description = "Données invalides")
     })
-    public Contrat update(
+    public ContratResponse update(
             @Parameter(description = "Identifiant du contrat") @PathVariable Long id,
-            @RequestBody Contrat contrat) {
+            @Valid @RequestBody ContratRequest contrat) {
         return contratService.update(id, contrat);
     }
 

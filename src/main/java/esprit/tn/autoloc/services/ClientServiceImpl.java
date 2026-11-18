@@ -1,7 +1,10 @@
 package esprit.tn.autoloc.services;
 
 import esprit.tn.autoloc.Entities.Client;
+import esprit.tn.autoloc.dto.ClientRequest;
+import esprit.tn.autoloc.dto.ClientResponse;
 import esprit.tn.autoloc.exception.ResourceNotFoundException;
+import esprit.tn.autoloc.mapper.ClientMapper;
 import esprit.tn.autoloc.repository.IClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,39 +17,32 @@ import java.util.List;
 public class ClientServiceImpl implements IClientService {
 
     private final IClientRepository clientRepository;
+    private final ClientMapper clientMapper;
 
     @Override
-    public List<Client> findAll() {
-        return clientRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<ClientResponse> findAll() {
+        return clientRepository.findAll().stream().map(clientMapper::toResponse).toList();
     }
 
     @Override
-    public Client findById(Long id) {
-        return clientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Client introuvable avec l'identifiant " + id));
-    }
-
-    @Override
-    public Client create(Client client) {
-        if (client.getIdClient() != null) {
-            throw new IllegalArgumentException("Un nouveau client ne doit pas avoir d'identifiant");
-        }
-        validate(client);
-        return clientRepository.save(client);
+    @Transactional(readOnly = true)
+    public ClientResponse findById(Long id) {
+        return clientMapper.toResponse(getOrThrow(id));
     }
 
     @Override
     @Transactional
-    public Client update(Long id, Client client) {
-        Client existing = findById(id);
-        validate(client);
-        existing.setNom(client.getNom());
-        existing.setPrenom(client.getPrenom());
-        existing.setEmail(client.getEmail());
-        existing.setTelephone(client.getTelephone());
-        existing.setNumPermis(client.getNumPermis());
-        existing.setDateInscription(client.getDateInscription());
-        return clientRepository.save(existing);
+    public ClientResponse create(ClientRequest request) {
+        return clientMapper.toResponse(clientRepository.save(clientMapper.toEntity(request)));
+    }
+
+    @Override
+    @Transactional
+    public ClientResponse update(Long id, ClientRequest request) {
+        Client existing = getOrThrow(id);
+        clientMapper.updateEntity(existing, request);
+        return clientMapper.toResponse(clientRepository.save(existing));
     }
 
     @Override
@@ -57,12 +53,8 @@ public class ClientServiceImpl implements IClientService {
         clientRepository.deleteById(id);
     }
 
-    private void validate(Client client) {
-        if (client.getNom() == null || client.getNom().isBlank()) {
-            throw new IllegalArgumentException("Le nom du client est obligatoire");
-        }
-        if (client.getNumPermis() == null || client.getNumPermis().isBlank()) {
-            throw new IllegalArgumentException("Le numero de permis est obligatoire");
-        }
+    private Client getOrThrow(Long id) {
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Client introuvable avec l'identifiant " + id));
     }
 }

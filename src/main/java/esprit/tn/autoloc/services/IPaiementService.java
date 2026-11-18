@@ -1,6 +1,7 @@
 package esprit.tn.autoloc.services;
 
-import esprit.tn.autoloc.Entities.Paiement;
+import esprit.tn.autoloc.dto.PaiementResponse;
+
 import java.util.List;
 
 /**
@@ -8,6 +9,6 @@ import java.util.List;
  * Les paiements sont créés en cascade via leur contrat parent.
  */
 public interface IPaiementService {
-    Paiement findById(Long id);
-    List<Paiement> findAll();
+    PaiementResponse findById(Long id);
+    List<PaiementResponse> findAll();
 }

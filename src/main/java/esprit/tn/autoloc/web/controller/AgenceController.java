@@ -1,6 +1,8 @@
 package esprit.tn.autoloc.web.controller;
 
-import esprit.tn.autoloc.Entities.Agence;
+import esprit.tn.autoloc.dto.AgenceRequest;
+import esprit.tn.autoloc.dto.AgenceResponse;
+import jakarta.validation.Valid;
 import esprit.tn.autoloc.services.IAgenceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +26,7 @@ public class AgenceController {
     @Operation(summary = "Lister les agences", description = "Recupere la liste complete des agences")
     @ApiResponse(responseCode = "200", description = "Liste recuperee avec succes")
     @GetMapping
-    public List<Agence> findAll() {
+    public List<AgenceResponse> findAll() {
         return agenceService.findAll();
     }
 
@@ -34,7 +36,7 @@ public class AgenceController {
             @ApiResponse(responseCode = "404", description = "Agence introuvable")
     })
     @GetMapping("/{id}")
-    public Agence findById(@Parameter(description = "Identifiant de l'agence") @PathVariable Long id) {
+    public AgenceResponse findById(@Parameter(description = "Identifiant de l'agence") @PathVariable Long id) {
         return agenceService.findById(id);
     }
 
@@ -45,7 +47,7 @@ public class AgenceController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Agence create(@RequestBody Agence agence) {
+    public AgenceResponse create(@Valid @RequestBody AgenceRequest agence) {
         return agenceService.create(agence);
     }
 
@@ -56,8 +58,8 @@ public class AgenceController {
             @ApiResponse(responseCode = "400", description = "Donnees invalides")
     })
     @PutMapping("/{id}")
-    public Agence update(@Parameter(description = "Identifiant de l'agence") @PathVariable Long id,
-                         @RequestBody Agence agence) {
+    public AgenceResponse update(@Parameter(description = "Identifiant de l'agence") @PathVariable Long id,
+                         @Valid @RequestBody AgenceRequest agence) {
         return agenceService.update(id, agence);
     }
 

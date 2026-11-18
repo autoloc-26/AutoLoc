@@ -1,6 +1,6 @@
 package esprit.tn.autoloc.web.controller;
 
-import esprit.tn.autoloc.Entities.Paiement;
+import esprit.tn.autoloc.dto.PaiementResponse;
 import esprit.tn.autoloc.services.IPaiementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,7 +31,7 @@ public class PaiementController {
     @GetMapping
     @Operation(summary = "Lister tous les paiements", description = "Récupère la liste complète des paiements")
     @ApiResponse(responseCode = "200", description = "Liste des paiements récupérée avec succès")
-    public List<Paiement> findAll() {
+    public List<PaiementResponse> findAll() {
         return paiementService.findAll();
     }
 
@@ -46,7 +46,7 @@ public class PaiementController {
             @ApiResponse(responseCode = "200", description = "Paiement trouvé"),
             @ApiResponse(responseCode = "404", description = "Paiement introuvable")
     })
-    public Paiement findById(@Parameter(description = "Identifiant du paiement") @PathVariable Long id) {
+    public PaiementResponse findById(@Parameter(description = "Identifiant du paiement") @PathVariable Long id) {
         return paiementService.findById(id);
     }
 }
